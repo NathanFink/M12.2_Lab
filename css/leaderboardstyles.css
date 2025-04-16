@@ -1,0 +1,78 @@
+body {
+    background-color: #add8e6;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  .items-container {
+    margin: 0 auto;
+    max-width: 800px;
+  }
+  
+  table {
+    margin: 20px auto; 
+    width: 80%;
+    border-collapse: collapse;
+    border: 2px solid #000;
+  }
+  thead th {
+    text-align: center;
+    background-color: #f2f2f2;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 10px;
+  }
+  
+  .add-item-form {
+    margin: 0 auto;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center; 
+  }
+  
+  .form-row {
+    margin-bottom: 15px;
+  }
+  
+  .form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .form-row input {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  
+  button {
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 10px auto;
+  }
+  
+  .add-item-form button {
+    display: block;
+    margin: 20px auto 0 auto;
+  }
+
+  .button-back{
+    width: 100px;
+    height: 30px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+  
