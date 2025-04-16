@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Leaderboard Standings</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/leaderboardstyles.css">
+
+</head>
+<body>
+  <h1>My Simple Inventory App</h1>
+  
+  <label for="levelSelect">Show leaderboard for:</label>
+<select id="levelSelect">
+  <option value="0">ENDLESS</option>
+  <option value="1">Level 1</option>
+  <option value="2">Level 2</option>
+  <option value="3">Level 3</option>
+  <option value="4">Level 4</option>
+  <option value="5">Level 5</option>
+  <option value="6">Level 6</option>
+  <option value="7">Level 7</option>
+  <option value="8">Level 8</option>
+  <option value="9">Level 9</option>
+  <option value="10">Level 10</option>
+</select>
+  
+  <div class="items-container">
+    <button id="loadButton">Load All Items</button>
+    
+    <table id="items-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+          <th>Time</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="add-item-form">
+    <h3>Add Items</h3>
+    <div class="form-row">
+      <label for="item-id">Rank:</label>
+      <input type="text" id="item-id" placeholder="Number" />
+    </div>
+    <div class="form-row">
+      <label for="item-name">Name:</label>
+    <input type="text" id="item-name" placeholder="Item-Name" />
+    </div>
+    <div class="form-row">
+      <label for="item-score">Score:</label>
+      <input type="number" id="item-score" placeholder="Number" />
+    </div>
+    <button id="addButton">Add Item</button>
+  </div>
+  <div>
+    <a href="index.html">
+    <button class="button-back">
+        Back
+    </button>
+    </a>
+  </div>
+
+  <script>
+    // Load items and adds them to the list
+    function loadItems() {
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          let items = JSON.parse(xhr.responseText);
+          let tbody = document.querySelector("#items-table tbody");
+          tbody.innerHTML = "";
+
+          items.forEach(item => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.id}</td>
+              <td>${item.name}</td>
+              <td>${item.score}</td>
+              <td>${item.time}
+              <td><button onclick="deleteItem('${item.id}', this)">Delete</button></td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+      };
+      const level = document.getElementById('levelSelect').value;
+      // build URL
+      const base = "https://pd8riz0m4b.execute-api.us-east-2.amazonaws.com/items";
+      const url  = level
+      ? `${base}?level=${encodeURIComponent(level)}`
+      : base;
+      xhr.open("GET", url);
+      xhr.send();
+    }
+
+    function addItem() {
+      const id = document.getElementById("item-id").value;
+      const name = document.getElementById("item-name").value;
+      const score = document.getElementById("item-score").value;
+      const level = parseInt(document.getElementById("levelSelect").value, 10);
+
+
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          loadItems();
+          document.getElementById("item-id").value = "";
+          document.getElementById("item-name").value = "";
+          document.getElementById("item-score").value = "";
+        }
+      };
+      xhr.open("PUT", "https://pd8riz0m4b.execute-api.us-east-2.amazonaws.com/items");
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(JSON.stringify({ id, name, score: parseFloat(score), level }));
+    }
+
+    // Deletes the item in table
+    function deleteItem(itemId, button) {
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          let row = button.parentElement.parentElement;
+          row.parentElement.removeChild(row);
+        }
+      };
+      xhr.open("DELETE", "https://pd8riz0m4b.execute-api.us-east-2.amazonaws.com/items" + "/" + itemId);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send();
+    }
+    document.getElementById("loadButton").addEventListener("click", loadItems);
+    document.getElementById("addButton").addEventListener("click", addItem);
+    document.getElementById('levelSelect')
+    .addEventListener('change', loadItems);
+  </script>
+</body>
+
+</html>
