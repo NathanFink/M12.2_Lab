@@ -8,9 +8,9 @@
   </head>
   <body style="background-image: url('img/MainBackground.png')">
     <div class="button-column">
-        <a href="ballgame.html">
-            <button>Start</button>
-        </a>
+      <h1 class="title">Shape Invaders</h1>
+      <input id="nameInput" type="text" placeholder="Enter your name"/>
+      <button id="startBtn">Start</button>
         <a href="levels.html">
             <button>Levels</button>
         </a>
@@ -21,11 +21,17 @@
     </div>
   </body>
   <script>
-    document.getElementById('exitbt').addEventListener('click', function(){
+    document.getElementById('exitbt').addEventListener('click', () => {
+      if (confirm('Are you sure you want to leave?')) {
+        window.location.replace('about:blank');
+      }
+    });
 
-    if (confirm('Are you sure you want to leave?')) {
-        window.location.replace = 'about:blank';
-    }
+    document.getElementById('startBtn').addEventListener('click', () => {
+      let name = document.getElementById('nameInput').value.trim();
+      if (!name) name = 'Anonymous';
+      localStorage.setItem('playerName', name);
+      window.location.href = 'ballgame.html';
     });
   </script>
 </html>

@@ -33,8 +33,29 @@ html, body {
   padding: 0;
   overflow: hidden;
   height: 100%;
+  background: url('../img/MainBackground.png') no-repeat center center fixed;
+  background-size: cover;
 }
 
 canvas {
   display: block;
+  background-color: transparent;
+}
+
+.button-column {
+  display: none;
+  position: absolute;
+  top: 45%; 
+  left: 45%;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 10;
+  align-items: center;
+}
+
+.button-column button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  cursor: pointer;
 }

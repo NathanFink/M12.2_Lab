@@ -71,34 +71,36 @@
   </div>
 
   <script>
-    // Load items and adds them to the list
     function loadItems() {
-      let xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          let items = JSON.parse(xhr.responseText);
-          let tbody = document.querySelector("#items-table tbody");
-          tbody.innerHTML = "";
+  let xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      let items = JSON.parse(xhr.responseText);
+      items.sort((a, b) => b.score - a.score);
 
-          items.forEach(item => {
-            let row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${item.id}</td>
-              <td>${item.name}</td>
-              <td>${item.score}</td>
-              <td>${item.time}
-              <td><button onclick="deleteItem('${item.id}', this)">Delete</button></td>
-            `;
-            tbody.appendChild(row);
-          });
-        }
-      };
+      let tbody = document.querySelector("#items-table tbody");
+      tbody.innerHTML = "";
+
+      items.forEach((item, index) => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>              <!-- rank -->
+          <td>${item.name}</td>
+          <td>${item.score}</td>
+          <td>${item.time || ""}</td>
+          <td>
+            <button onclick="deleteItem('${item.id}', this)">
+              Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+  };
       const level = document.getElementById('levelSelect').value;
-      // build URL
       const base = "https://pd8riz0m4b.execute-api.us-east-2.amazonaws.com/items";
-      const url  = level
-      ? `${base}?level=${encodeURIComponent(level)}`
-      : base;
+      const url  = level ? `${base}?level=${encodeURIComponent(level)}` : base;
       xhr.open("GET", url);
       xhr.send();
     }
