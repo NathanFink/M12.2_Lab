@@ -10,7 +10,7 @@ const menu = document.querySelector('.button-column');
 const bg = new Image();
 bg.src = 'img/MainBackground.png';
 
-//Starts currentLevel at ) unless level is specified in the URL
+//Starts currentLevel at unless level is specified in the URL
 const urlParams = new URLSearchParams(window.location.search);
 let currentLevel = urlParams.has('level') ? parseInt(urlParams.get('level'), 10) : 0;
 
@@ -240,19 +240,34 @@ class Enemy extends Shape {
   }
 }
 
-//Creates Bigger Yellow Circle objectives that must be touched 
-class YellowCircleObjective extends Shape {
+//Creates Bigger Green Circle objectives that must be touched 
+class GreenCircleObjective extends Shape {
   constructor(x, y, size = 15, scoreValue = 500) {
     super(x, y);
-    this.size = size;
-    this.scoreValue = scoreValue;
+    if(currentLevel === 2){
+      this.scoreValue = scoreValue / 2;
+      this.size = size;
+    }
+    else if(currentLevel === 9){
+      this.scoreValue = scoreValue;
+      this.size = size / 2;
+    }
+    else if(currentLevel === 10){
+      this.scoreValue = scoreValue / 2;
+      this.size = size / 2;
+    }
+    else{
+      this.size = size;
+      this.scoreValue = scoreValue;
+    }
+    
     this.exists = true;
   }
   //draws the circle to visbile
   draw() {
     if (!this.exists) return;
     ctx.beginPath();
-    ctx.fillStyle = 'yellow';
+    ctx.fillStyle = 'green';
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
@@ -322,10 +337,10 @@ class PurpleTriangleObjective extends Shape {
   }
 }
 
-//function that spawns the yellow objectives at a random position
-function spawnYellowObjective() {
+//function that spawns the green objectives at a random position
+function spawnGreenObjective() {
   const margin = 50;
-  return new YellowCircleObjective(
+  return new GreenCircleObjective(
     random(margin, width - margin),
     random(margin, height - margin)
   );
@@ -350,12 +365,13 @@ const enemyProjectiles = [];
 const enemies = [];
 const objectives = [];
 
-//if level 1 spawn a yellow objective
-let yellowObj = currentLevel === 1 ? spawnYellowObjective() : null;
+//if level 1 and 2 spawn a greeen objective
+let greenObj = currentLevel === 1 || currentLevel === 2 || currentLevel === 5 || currentLevel === 6 || currentLevel === 9 || currentLevel === 10 ? spawnGreenObjective() : null;
+
 
 //if level is 3 then spawn purple objectives
 let purpleObjs = [];
-if (currentLevel === 3) {
+if (currentLevel === 3 || currentLevel === 5 || currentLevel === 8 || currentLevel === 10) {
   const m = 60;
   //3 purple objectives at random positions and with proper rates for health, size and spawning
   for (let i = 0; i < 3; i++) {
@@ -371,12 +387,30 @@ if (currentLevel === 3) {
   }
 }
 
+if (currentLevel === 4 || currentLevel === 6) {
+  const m = 60;
+  //5 purple objectives at random positions and with proper rates for health, size and spawning
+  for (let i = 0; i < 5; i++) {
+    purpleObjs.push(
+      new PurpleTriangleObjective(
+        random(m, width - m),
+        random(m, height - m),
+        20,
+        10,
+        5000
+      )
+    );
+  }
+}
+
 //spawns 3-5 enemies 
 spawnEnemies(random(3, 5)); //inital enemies
 setInterval(() => { if (!gameOver) spawnEnemies(random(3, 5)); }, 15000); //repeat spawns after 15 seconds
 
 //shoot function that releases projectiles from the players barrel angle, with delay between shots
 function shoot() {
+  if (currentLevel === 7 || currentLevel === 8 || currentLevel === 9 || currentLevel === 10) return;//if level is 2 player cant shoot
+
   const now = Date.now();
   if (now - lastShotTime < shotDelay) return;
   lastShotTime = now;
@@ -429,20 +463,22 @@ function loop() {
   drawScore();
   drawLives();
 
-  //level 1 produces yellow objectives
-  if (currentLevel === 1 && yellowObj) {
-    yellowObj.update(evilCircle);
-    if (!yellowObj.exists) yellowObj = spawnYellowObjective();
-    yellowObj.draw();
+  //levels 1, 2, 5, and 6 produces green objectives
+  if ((currentLevel === 1 || currentLevel === 2 || currentLevel === 5 || currentLevel === 6 || currentLevel === 9 || currentLevel === 10) && greenObj) {
+    greenObj.update(evilCircle);
+    if (!greenObj.exists) greenObj = spawnGreenObjective();
+    greenObj.draw();
   }
 
-  //level 3 produces purple objectives
-  if (currentLevel === 3) {
+
+  //level 3, 4, 5, and 6 produces purple objectives
+  if (currentLevel === 3 || currentLevel === 4 || currentLevel === 5 || currentLevel === 6 || currentLevel === 8 || currentLevel === 10) {
     purpleObjs.forEach(t => {
       t.update();
       t.draw();
     });
   }
+
 
   //move, shoot, and collison functionality 
   evilCircle.move();
@@ -456,7 +492,7 @@ function loop() {
     p.draw();
     p.update();
     //collision with purple objects here 
-    if (currentLevel === 3) {
+    if (currentLevel === 3  || currentLevel === 4 || currentLevel === 5 || currentLevel === 6 || currentLevel === 8 || currentLevel === 10) {
       purpleObjs.forEach(t => {
         if (
           t.exists &&
@@ -497,3 +533,9 @@ function loop() {
 }
 
 loop();
+
+const playAgainBtn = document.getElementById('playAgainBtn');
+playAgainBtn.addEventListener('click', () => {
+  // reload page with same level param (resets all variables & restarts loop)
+  window.location.reload();
+});

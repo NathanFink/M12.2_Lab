@@ -11,9 +11,7 @@
       <h1 class="title">Shape Invaders</h1>
       <input id="nameInput" type="text" placeholder="Enter your name"/>
       <button id="startBtn">Start</button>
-        <a href="levels.html">
-            <button>Levels</button>
-        </a>
+      <button id = "levelBtn">Levels</button>
         <a href="leaderboard.html">
             <button>Leaderboard</button>
         </a>
@@ -32,6 +30,13 @@
       if (!name) name = 'Anonymous';
       localStorage.setItem('playerName', name);
       window.location.href = 'ballgame.html';
+    });
+
+    document.getElementById('levelBtn').addEventListener('click', () => {
+      let name = document.getElementById('nameInput').value.trim();
+      if (!name) name = 'Anonymous';
+      localStorage.setItem('playerName', name);
+      window.location.href = 'levels.html';
     });
   </script>
 </html>

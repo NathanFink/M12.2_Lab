@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="css/leaderboardstyles.css">
 
 </head>
-<body>
-  <h1>My Simple Inventory App</h1>
+<body style="background-image: url('img/MainBackground.png')">
+  <h1>Leaderboard Standings</h1>
   
   <label for="levelSelect">Show leaderboard for:</label>
 <select id="levelSelect">
@@ -46,22 +46,24 @@
       </tbody>
     </table>
   </div>
+
   <div class="add-item-form">
     <h3>Add Items</h3>
     <div class="form-row">
-      <label for="item-id">Rank:</label>
-      <input type="text" id="item-id" placeholder="Number" />
-    </div>
-    <div class="form-row">
       <label for="item-name">Name:</label>
-    <input type="text" id="item-name" placeholder="Item-Name" />
+    <input type="text" id="item-name" placeholder="Name" />
     </div>
     <div class="form-row">
       <label for="item-score">Score:</label>
-      <input type="number" id="item-score" placeholder="Number" />
+      <input type="number" id="item-score" placeholder="Score Number" />
+    </div>
+    <div class="form-row">
+      <label for="item-time">Time:</label>
+      <input type="number" id="item-time" placeholder="Time Number" />
     </div>
     <button id="addButton">Add Item</button>
   </div>
+
   <div>
     <a href="index.html">
     <button class="button-back">
@@ -106,24 +108,29 @@
     }
 
     function addItem() {
-      const id = document.getElementById("item-id").value;
-      const name = document.getElementById("item-name").value;
+      const name = document.getElementById("item-name").value.trim();
       const score = document.getElementById("item-score").value;
+      const time = document.getElementById("item-time").value.trim();
       const level = parseInt(document.getElementById("levelSelect").value, 10);
+
+      if (!name || isNaN(score) || !time) {
+    alert("Please fill out Name, Score and Time.");
+    return;
+  }
 
 
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           loadItems();
-          document.getElementById("item-id").value = "";
           document.getElementById("item-name").value = "";
           document.getElementById("item-score").value = "";
+          document.getElementById("item-time").value = "";
         }
       };
       xhr.open("PUT", "https://pd8riz0m4b.execute-api.us-east-2.amazonaws.com/items");
       xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(JSON.stringify({ id, name, score: parseFloat(score), level }));
+      xhr.send(JSON.stringify({id: Date.now().toString(), name, score: parseFloat(score), time: parseFloat(time), level }));
     }
 
     // Deletes the item in table
